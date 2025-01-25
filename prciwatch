@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+set -e
+
+# Initial settings
+reviewer=""
+message=""
+max_wait_time=1200  # Default to 20 minutes
+branch=""
+
+# Process arguments
+for arg in "$@"; do
+  if [[ "$arg" == -reviewer=* ]]; then
+    reviewer_name=${arg#-reviewer=}
+    reviewer="${reviewer_name}"
+  fi
+  if [[ "$arg" == -message=* ]]; then
+    message=${arg#-message=}
+  fi
+  if [[ "$arg" == -timeout=* ]]; then
+    timeout_value=${arg#-timeout=}
+    if [[ "$timeout_value" =~ ^[0-9]+$ ]]; then
+      max_wait_time=$((timeout_value * 60))  # Convert minutes to seconds
+    else
+      echo "Invalid timeout value. Please specify a number (in minutes)."
+      exit 1
+    fi
+  fi
+  if [[ "$arg" == -branch=* ]]; then
+    branch=${arg#-branch=}
+  fi
+done
+
+# Determine the branch name
+if [[ -z "$branch" ]]; then
+  branch=$(git rev-parse --abbrev-ref HEAD)
+fi
+
+# Retrieve the pull request URL
+pr_url=$(gh pr view "$branch" --json url -q .url 2>/dev/null)
+if [[ -z "$pr_url" ]]; then
+  echo "No pull request found for branch: $branch"
+  exit 1
+fi
+
+# Record the start time
+start_time=$(date +%s)
+
+# Function to check the CI status
+check_ci_status() {
+  gh pr checks --json state -q '.[0].state' 2>/dev/null
+}
+
+# Main loop
+while true; do
+  # Get the current CI status
+  ci_status=$(check_ci_status)
+
+  if [[ "$ci_status" == "SUCCESS" ]]; then
+    echo "$reviewer $message $pr_url"
+    exit 0
+  fi
+
+  if [[ "$ci_status" == "FAILURE" ]]; then
+    echo "CI failed. Check the PR at: $pr_url"
+    exit 1
+  fi
+
+  # Check the elapsed time
+  current_time=$(date +%s)
+  elapsed_time=$((current_time - start_time))
+
+  if ((elapsed_time > max_wait_time)); then
+    echo "Time limit exceeded ($((max_wait_time / 60)) minutes). Forcefully exiting."
+    exit 2
+  fi
+
+  sleep 60
+done
