@@ -6,6 +6,17 @@ reviewer=""
 message=""
 branch=""
 
+# Check if required variables are set
+if [[ -z "$reviewer" ]]; then
+  echo "Error: Reviewer is not specified." >&2
+  exit 1
+fi
+
+if [[ -z "$message" ]]; then
+  echo "Error: Message is not specified." >&2
+  exit 1
+fi
+
 # Execute gh-prciwatch with arguments and capture output and exit code
 output=""
 exit_code=0
@@ -32,3 +43,4 @@ case $exit_code in
 esac
 
 exit $exit_code
+
