@@ -31,10 +31,18 @@ if [[ -z "$pr_url" ]]; then
   exit 1
 fi
 
-# Watch CI status
-if gh pr checks --watch -i 60 --json state -q '.[0].state'; then
-  echo "$message $pr_url"
-else
-  echo "CI failed. Check the PR at: $pr_url"
-  exit 1
-fi
+# Watch CI status until it becomes SUCCESS
+echo "Watching CI status for PR: $pr_url"
+while true; do
+  state=$(gh pr checks --json state -q '.[0].state')
+  if [[ "$state" == "SUCCESS" ]]; then
+    echo "$message $pr_url"
+    exit 0
+  elif [[ "$state" == "FAILURE" ]]; then
+    echo "$pr_url"
+    exit 1
+  else
+    echo "Current CI state: $state. Retrying in 60 seconds..."
+    sleep 60
+  fi
+done
