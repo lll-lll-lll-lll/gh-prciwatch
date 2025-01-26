@@ -57,7 +57,7 @@ while true; do
   ci_status=$(check_ci_status)
 
   if [[ "$ci_status" == "SUCCESS" ]]; then
-    echo "$reviewer $message $pr_url"
+    echo "$message $pr_url"
     exit 0
   fi
 
