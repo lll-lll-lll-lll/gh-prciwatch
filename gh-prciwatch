@@ -9,25 +9,31 @@ branch=""
 
 # Process arguments
 for arg in "$@"; do
-  if [[ "$arg" == -reviewer=* ]]; then
-    reviewer_name=${arg#-reviewer=}
-    reviewer="${reviewer_name}"
-  fi
-  if [[ "$arg" == -message=* ]]; then
-    message=${arg#-message=}
-  fi
-  if [[ "$arg" == -timeout=* ]]; then
-    timeout_value=${arg#-timeout=}
-    if [[ "$timeout_value" =~ ^[0-9]+$ ]]; then
-      max_wait_time=$((timeout_value * 60))  # Convert minutes to seconds
-    else
-      echo "Invalid timeout value. Please specify a number (in minutes)."
+  case "$arg" in
+    --reviewer=*|-r=*)
+      reviewer_name=${arg#*=}
+      reviewer="${reviewer_name}"
+      ;;
+    --message=*|-m=*)
+      message=${arg#*=}
+      ;;
+    --timeout=*)
+      timeout_value=${arg#*=}
+      if [[ "$timeout_value" =~ ^[0-9]+$ ]]; then
+        max_wait_time=$((timeout_value * 60))  # Convert minutes to seconds
+      else
+        echo "Invalid timeout value. Please specify a number (in minutes)."
+        exit 1
+      fi
+      ;;
+    --branch=*|-b=*)
+      branch=${arg#*=}
+      ;;
+    *)
+      echo "Unknown argument: $arg"
       exit 1
-    fi
-  fi
-  if [[ "$arg" == -branch=* ]]; then
-    branch=${arg#-branch=}
-  fi
+      ;;
+  esac
 done
 
 # Determine the branch name
@@ -76,3 +82,4 @@ while true; do
 
   sleep 60
 done
+
