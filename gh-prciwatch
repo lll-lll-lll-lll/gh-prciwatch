@@ -2,7 +2,6 @@
 set -e
 
 # Initial settings
-reviewer=""
 message=""
 max_wait_time=1200  # Default to 20 minutes
 branch=""
@@ -10,10 +9,6 @@ branch=""
 # Process arguments
 for arg in "$@"; do
   case "$arg" in
-    --reviewer=*|-r=*)
-      reviewer_name=${arg#*=}
-      reviewer="${reviewer_name}"
-      ;;
     --message=*|-m=*)
       message=${arg#*=}
       ;;

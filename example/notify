@@ -2,15 +2,9 @@
 set -e
 
 # Define variables for arguments
-reviewer=""
 message=""
 branch=""
 
-# Check if required variables are set
-if [[ -z "$reviewer" ]]; then
-  echo "Error: Reviewer is not specified." >&2
-  exit 1
-fi
 
 if [[ -z "$message" ]]; then
   echo "Error: Message is not specified." >&2
@@ -21,7 +15,7 @@ fi
 output=""
 exit_code=0
 
-output=$(gh prciwatch -reviewer="$reviewer" -message="$message" -branch="$branch" 2>&1) || exit_code=$?
+output=$(gh prciwatch -message="$message" -branch="$branch" 2>&1) || exit_code=$?
 
 # Copy output to clipboard
 echo "$output" | pbcopy
