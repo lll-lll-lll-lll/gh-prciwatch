@@ -29,10 +29,10 @@ echo "$output" | pbcopy
 # Notify using terminal-notifier
 case $exit_code in
   0)
-    terminal-notifier -title "CI Check Passed" -message "Success: $output" -sound default
+	  terminal-notifier -title "CI Check Passed" -message "$output" -sound default -execute "bash -c 'echo \"$output\" | pbcopy'"
     ;;
   1)
-    terminal-notifier -title "CI Check Failed" -message "Failure: $output" -sound default
+    terminal-notifier -title "CI Check Failed" -message "Failure: $output" -sound default -open $output
     ;;
   2)
     terminal-notifier -title "CI Check Timeout" -message "Timeout: CI checks did not complete in time.\n$output" -sound default
