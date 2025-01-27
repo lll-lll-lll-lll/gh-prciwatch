@@ -47,7 +47,7 @@ start_time=$(date +%s)
 
 # Function to check the CI status
 check_ci_status() {
-  gh pr checks --json state -q '.[0].state' 2>/dev/null
+  gh pr checks "$branch" --json state -q '.[0].state' 2>/dev/null
 }
 
 # Main loop
