@@ -4,6 +4,7 @@ set -e
 # Define variables for arguments
 message=""
 branch=""
+timeout=""
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
@@ -14,6 +15,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --branch)
       branch="$2"
+      shift 2
+      ;;
+    --timeout)
+      timeout="$2"
       shift 2
       ;;
     *)
@@ -29,22 +34,31 @@ if [[ -z "$message" ]]; then
   exit 1
 fi
 
-# Execute gh-prciwatch with arguments and capture output and exit code
+# Build argument array for gh prciwatch
+args=( "--message=$message" )
+if [[ -n "$branch" ]]; then
+  args+=( "--branch=$branch" )
+fi
+if [[ -n "$timeout" ]]; then
+  args+=( "--timeout=$timeout" )
+fi
+
+# Execute gh prciwatch with arguments and capture output and exit code
 output=""
 exit_code=0
 
-output=$(gh prciwatch --message="$message" --branch="$branch" 2>&1) || exit_code=$?
+output=$(gh prciwatch "${args[@]}" 2>&1) || exit_code=$?
 
 # Notify using terminal-notifier
 case $exit_code in
   0)
-    terminal-notifier -title "CI Check Passed" -message "$output"  -sound default -execute "bash -c 'echo \"$output\" | pbcopy'"
+    terminal-notifier -title "CI Check Passed" -message "$output" -sound default -execute "bash -c 'echo \"$output\" | pbcopy'"
     ;;
   1)
     terminal-notifier -title "CI Check Failed" -message "$output" -sound default
     ;;
   2)
-    terminal-notifier -title "CI Check Timeout" -message "PR CI TIMEOUT. open the url of pull request" -open $output -sound default
+    terminal-notifier -title "CI Check Timeout" -message "PR CI TIMEOUT. Open the URL of the pull request." -open "$output" -sound default
     ;;
   *)
     terminal-notifier -title "CI Check Error" -message "Error: Unexpected error occurred. Exit code: $exit_code\n$output" -sound default
