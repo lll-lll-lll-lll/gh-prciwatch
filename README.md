@@ -66,24 +66,6 @@ Below is an example scenario that demonstrates the typical usage of the script:
     - **If the CI status is `FAILURE`**: The script outputs the PR URL and exits with a status code of `1`.
     - **If the CI does not complete within the default 20 minutes (or the specified timeout)**: The script outputs a timeout message and exits with a status code of `2`.
 
-This example demonstrates how you can integrate the script into your workflow to automatically monitor your PR's CI status and receive immediate feedback based on the result.
-
----
-
-## How It Works
-
-1. The script retrieves the PR for the specified branch.
-2. It checks the CI status periodically (every minute).
-3. If the status is `SUCCESS`:
-   - It outputs the provided `message` along with the PR URL.
-   - Exits with `exit 0`.
-4. If the status is `FAILURE`:
-   - It outputs the PR URL.
-   - Exits with `exit 1`.
-5. If the elapsed time exceeds the specified timeout (`--timeout`):
-   - It outputs a timeout message.
-   - Exits with `exit 2`.
-
 ## Notes
 
 - The script uses the `gh pr view` command to retrieve PR details, so appropriate permissions are required.
