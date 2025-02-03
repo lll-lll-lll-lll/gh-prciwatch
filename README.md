@@ -11,11 +11,10 @@ This script is a GitHub CLI extension that monitors the CI status for a specifie
 
 ## Installation
 
-```sh
-chmod +x ci-monitor.sh
-```
 
-## Usage
+## Example Usage
+example path: https://github.com/lll-lll-lll-lll/gh-prciwatch/blob/main/example/notify
+
 
 ```sh
 notify [options]
