@@ -30,11 +30,6 @@ notify [options]
 
 ## Examples
 
-### Monitor the PR for the current branch
-
-```sh
-notify
-```
 
 ### Specify a custom message for slack
 
