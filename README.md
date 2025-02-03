@@ -39,12 +39,6 @@ notify --message="@reviewer :review_please: "
 @reviewer :review_please: https://github.com/owner/repo/pull/123
 ```
 
-### Wait for 30 minutes
-
-```sh
-notify --timeout=30
-```
-
 ### Monitor the PR for a specific branch
 
 ```sh
