@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
-# Initial settings
+# 初期設定
 message=""
-max_wait_time=1200  # Default to 20 minutes
+max_wait_time=1200  # default 20 minutes
 branch=""
 
-# Process arguments
 for arg in "$@"; do
   case "$arg" in
     --message=*|-m=*)
@@ -14,7 +13,7 @@ for arg in "$@"; do
       ;;
     --timeout=*) timeout_value=${arg#*=}
       if [[ "$timeout_value" =~ ^[0-9]+$ ]]; then
-        max_wait_time=$((timeout_value * 60))  # Convert minutes to seconds
+        max_wait_time=$((timeout_value * 60)) 
       else
         echo "Invalid timeout value. Please specify a number (in minutes)."
         exit 1
@@ -30,42 +29,40 @@ for arg in "$@"; do
   esac
 done
 
-# Determine the branch name
 if [[ -z "$branch" ]]; then
   branch=$(git rev-parse --abbrev-ref HEAD)
 fi
 
-# Retrieve the pull request URL
 pr_url=$(gh pr view "$branch" --json url -q .url 2>/dev/null)
 if [[ -z "$pr_url" ]]; then
   echo "No pull request found for branch: $branch"
   exit 1
 fi
 
-# Record the start time
 start_time=$(date +%s)
 
-# Function to check the CI status
 check_ci_status() {
-  gh pr checks "$branch" --json state -q '.[0].state' 2>/dev/null
+  gh run list -b "$branch" --json status,conclusion | jq -r '{
+    pending: map(select(.status != "completed")) | length,
+    failed: map(select(.conclusion == "failure")) | length
+  }'
 }
 
-# Main loop
 while true; do
-  # Get the current CI status
-  ci_status=$(check_ci_status)
+  ci_info=$(check_ci_status)
+  pending_count=$(echo "$ci_info" | jq -r '.pending')
+  failure_count=$(echo "$ci_info" | jq -r '.failed')
 
-  if [[ "$ci_status" == "SUCCESS" ]]; then
-    echo "$reviewer $message $pr_url"
-    exit 0
-  fi
-
-  if [[ "$ci_status" == "FAILURE" ]]; then
+  if [[ "$failure_count" -gt 0 ]]; then
     echo "$pr_url"
     exit 1
   fi
 
-  # Check the elapsed time
+  if [[ "$pending_count" -eq 0 ]]; then
+    echo "$reviewer $message $pr_url"
+    exit 0
+  fi
+
   current_time=$(date +%s)
   elapsed_time=$((current_time - start_time))
 
@@ -76,4 +73,3 @@ while true; do
 
   sleep 60
 done
-
