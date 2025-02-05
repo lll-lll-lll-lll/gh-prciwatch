@@ -11,6 +11,9 @@ This script is a GitHub CLI extension that monitors the CI status for a specifie
 
 ## Installation
 
+```sh
+gh extension install lll-lll-lll-lll/gh-prciwatch
+```
 
 ## Example Usage
 example path: https://github.com/lll-lll-lll-lll/gh-prciwatch/blob/main/example/notify
