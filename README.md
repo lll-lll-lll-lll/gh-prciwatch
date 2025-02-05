@@ -62,17 +62,6 @@ Below is an example scenario that demonstrates the typical usage of the script:
     notify --branch=feature/add-login --message="Login feature is ready for review!"
     ```
 
-3. **Behavior**:
-    - The script retrieves the PR for the `feature/add-login` branch.
-    - It checks the CI status every minute.
-    - **If the CI status is `SUCCESS`**: The script outputs the custom message along with the PR URL, then exits with a status code of `0`.
-    - **If the CI status is `FAILURE`**: The script outputs the PR URL and exits with a status code of `1`.
-    - **If the CI does not complete within the default 20 minutes (or the specified timeout)**: The script outputs a timeout message and exits with a status code of `2`.
-
-## Notes
-
-- The script uses the `gh pr view` command to retrieve PR details, so appropriate permissions are required.
-- The CI status check depends on the `gh pr checks` command; therefore, if you are using a CI system other than GitHub Actions, the script might not function as expected.
 
 ## License
 
