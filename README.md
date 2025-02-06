@@ -1,72 +1,88 @@
-# GitHub PR CI Monitor
+# gh-prciwatch
 
-## Overview
+`gh-prciwatch` is a shell script that uses GitHub CLI to monitor the CI status of a pull request for a specified branch.
 
-This script is a GitHub CLI extension that monitors the CI status for a specified branch's GitHub Pull Request (PR). If the CI status becomes `SUCCESS`, it prints the PR URL along with a specified message. If the status is `FAILURE`, it simply prints the PR URL and exits. Additionally, if the CI does not complete within a specified time limit, the script exits with a timeout message.
+## Features
 
-## Requirements
-
-- GitHub CLI (`gh`) must be installed.
-- You must be authenticated with `gh` (execute `gh auth login`).
+- Automatically detects the pull request for the specified branch.
+- Periodically checks the CI status and waits for completion.
+- If the CI fails, it immediately outputs the PR URL and exits.
+- Allows setting a timeout to forcefully exit if CI does not complete within the specified time.
+- Outputs the PR URL with a custom message upon success.
 
 ## Installation
+
+1. Ensure that `gh` (GitHub CLI) is installed.
+2. Ensure that the `jq` command is available.
 
 ```sh
 gh extension install lll-lll-lll-lll/gh-prciwatch
 ```
 
-## Example Usage
-example path: https://github.com/lll-lll-lll-lll/gh-prciwatch/blob/main/example/notify
-
+## Usage
 
 ```sh
-notify [options]
+gh prciwatch [OPTIONS]
 ```
 
 ### Options
 
-| Option                     | Shortcut      | Description                                                  |
-|----------------------------|---------------|--------------------------------------------------------------|
-| `--message=<msg>`          | `-m=<msg>`    | Specify the message to display on success                    |
-| `--timeout=<min>`          |               | Set the maximum wait time in minutes (default: 20 minutes)     |
-| `--branch=<branch>`        | `-b=<branch>` | Specify the branch for the PR to monitor (default: current branch) |
+| Option                 | Short Form     | Description                              |
+| ---------------------- | ------------- | ---------------------------------------- |
+| `--message <msg>`     | `-m <msg>`    | Message to display upon success         |
+| `--timeout <minutes>` |               | Timeout duration in minutes (default: 20) |
+| `--branch <branch>`   | `-b <branch>` | Specify the branch to monitor (defaults to the current branch) |
 
 ## Examples
 
-
-### Specify a custom message for slack
-
-```sh
-notify --message="@reviewer :review_please: "
-# output example 
-@reviewer :review_please: https://github.com/owner/repo/pull/123
-```
-
-### Monitor the PR for a specific branch
+### 1. Monitor the CI of the current branch's PR with default settings
 
 ```sh
-notify --branch=feature-branch
+gh prciwatch
 ```
 
----
+### 2. Monitor with a custom success message
 
-## Usage Example
+```sh
+gh prciwatch --message "CI passed!"
+```
 
-Below is an example scenario that demonstrates the typical usage of the script:
+### 3. Set a timeout of 30 minutes
 
-1. **Scenario**: You're working on a feature branch named `feature/add-login` and want to monitor the PR associated with this branch. You also want to display a custom message once the CI passes.
+```sh
+gh prciwatch --timeout 30
+```
 
-2. **Command**:
+### 4. Monitor a specific branch
 
-    ```sh
-    notify --branch=feature/add-login --message="Login feature is ready for review!"
-    ```
+```sh
+gh prciwatch --branch my-feature-branch
+```
 
+## Example Script: `notify`
+[notify](example/notify)
+
+A helper script named `notify` is available to enhance the usage of `gh-prciwatch` by providing desktop notifications using `terminal-notifier`. This script:
+
+- Runs `gh prciwatch` with the specified options.
+- Captures the output and exit code.
+- Uses `terminal-notifier` to display notifications based on the CI results.
+- Copies the PR URL to the clipboard if the CI succeeds.
+
+### Usage
+
+```sh
+notify --message "CI check in progress" --branch my-feature-branch --timeout 30
+```
+
+## Notes
+
+- You must be authenticated with `gh`.
+- `jq` must be installed for this script to function.
+- If the timeout is exceeded, the script exits with status code 2.
+- `terminal-notifier` must be installed for notifications to work.
 
 ## License
 
-MIT
+MIT License
 
----
-
-Feel free to modify or extend this document as needed!
