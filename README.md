@@ -61,6 +61,7 @@ gh prciwatch --branch my-feature-branch
 
 ## Example Script: `notify`
 [notify](example/notify)
+[terminal-notifier](https://github.com/julienXX/terminal-notifier)
 
 A helper script named `notify` is available to enhance the usage of `gh-prciwatch` by providing desktop notifications using `terminal-notifier`. This script:
 
