@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-# 初期設定
 message=""
 max_wait_time=1200  # default 20 minutes
 branch=""
@@ -59,7 +58,7 @@ while true; do
   fi
 
   if [[ "$pending_count" -eq 0 ]]; then
-    echo "$reviewer $message $pr_url"
+    echo "$message $pr_url"
     exit 0
   fi
 
