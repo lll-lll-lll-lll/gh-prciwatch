@@ -10,7 +10,8 @@ for arg in "$@"; do
     --message=*|-m=*)
       message=${arg#*=}
       ;;
-    --timeout=*) timeout_value=${arg#*=}
+    --timeout=*|-t=*)
+      timeout_value=${arg#*=}
       if [[ "$timeout_value" =~ ^[0-9]+$ ]]; then
         max_wait_time=$((timeout_value * 60)) 
       else

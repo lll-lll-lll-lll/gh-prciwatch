@@ -30,7 +30,7 @@ gh prciwatch [OPTIONS]
 | Option                 | Short Form     | Description                              |
 | ---------------------- | ------------- | ---------------------------------------- |
 | `--message <msg>`     | `-m <msg>`    | Message to display upon success         |
-| `--timeout <minutes>` |               | Timeout duration in minutes (default: 20) |
+| `--timeout <minutes>` | `-t <timeout>`| Timeout duration in minutes (default: 20) |
 | `--branch <branch>`   | `-b <branch>` | Specify the branch to monitor (defaults to the current branch) |
 
 ## Examples
