@@ -2,6 +2,8 @@
 
 `gh-prciwatch` is a shell script that uses GitHub CLI to monitor the CI status of a pull request for a specified branch.
 
+[zenn](https://zenn.dev/jordan/articles/79c2d8bef028ba)
+
 ## Features
 
 - Automatically detects the pull request for the specified branch.
